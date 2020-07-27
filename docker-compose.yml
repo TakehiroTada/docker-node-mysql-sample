@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  project_front:
+    image: node:12.18.2
+    container_name: project_front
+    ports:
+      - 3000:3000
+    volumes:
+      - ./front/:/src
+    working_dir: /src
+  project_back:
+    image: node:12.18.2
+    container_name: project_back
+    ports:
+      - 4000:4000
+    volumes:
+      - ./back/:/src
+    working_dir: /src
+    depends_on:
+      - project_db
+  project_db:
+    image: mysql:5.7
+    container_name: project_db
+    command:
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+    container_name: db
+    ports:
+      - 5000:3306
+    environment:
+      - MYSQL_DATABASE=tada_laravel_tutorial
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - ./.docker/mysql/etc-mysql.cnf:/etc/mysql/conf.d/etc-mysql.cnf
+      - ./.docker/mysql/init:/docker-entrypoint-initdb.d
+volumes:
+  db-data:
+    driver: local
